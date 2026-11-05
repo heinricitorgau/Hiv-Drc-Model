@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.svg" alt="Hiv-Drc-Model" width="100%">
+</p>
+
 # HIV/AIDS Transmission Dynamics with Treatment — The DRC Case
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
