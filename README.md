@@ -2,7 +2,11 @@
   <picture><source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg"><img src="assets/banner.svg" alt="Hiv-Drc-Model" width="100%"></picture>
 </p>
 
-# HIV/AIDS Transmission Dynamics with Treatment — The DRC Case
+# Hiv-Drc-Model
+
+**English** · [繁體中文](README.zh-TW.md)
+
+> HIV/AIDS transmission dynamics with treatment: the DRC case, reproduced and then run backwards.
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -1036,10 +1040,10 @@ independent derivation or a property that must hold mathematically:
 | Equilibria | The residual $\max\lvert f(y^*)\rvert$ of the vector field |
 | Threshold theorem | Sign of the dominant eigenvalue against sign of $R_0 - 1$, swept across the threshold |
 | Time-varying rates | That the constant path is bit-identical, that the ramp is monotonic from floor to ceiling, and that $R_0$ refuses rather than misleads |
-| The structural ceiling | That a hundredfold rise in $lpha$ moves ART coverage by under 2 points while $\lambda$ is held at its published value |
+| The structural ceiling | That a hundredfold rise in $\alpha$ moves ART coverage by under 2 points while $\lambda$ is held at its published value |
 | Prior densities | Numerical integration to one, and a log-normal's median and log-spread against its own samples |
 | The contraction diagnostic | Two constructed posteriors with known answers: one that *is* the prior (0), one ten times sharper (0.9) |
-| That priors reach the sampler | A prior insisting $eta pprox 0.40$, against data generated at 0.15, must drag the posterior with it — the one failure mode that would invalidate every contraction number |
+| That priors reach the sampler | A prior insisting $\beta \approx 0.40$, against data generated at 0.15, must drag the posterior with it — the one failure mode that would invalidate every contraction number |
 | Trajectories | The population balance $dN/dt = \Lambda - \mu N - \delta_1 A - \delta_2 T$, and the invariant region $N \le \Lambda/\mu$ |
 | Sensitivity indices | The exact values $+1$ for $\beta$ and $-\phi/(\mu+\phi)$ for $\phi$ |
 | PRCC implementation | A synthetic problem with a known monotone answer |
@@ -1118,10 +1122,12 @@ hiv-drc-model/
 │   ├── real/                UNAIDS/World Bank snapshot for the DRC
 │   └── synthetic/           Generated observations (`--data` writes here)
 ├── figures/                 Generated output (git-ignored)
+├── assets/                  README banner
 ├── app.py                   Streamlit dashboard — presentation only, no computation
 ├── pyproject.toml
 ├── requirements.txt        Deploy mirror of pyproject's runtime dependencies
-└── README.md
+├── README.md                this file (English)
+└── README.zh-TW.md          Traditional Chinese version
 ```
 
 The layering is deliberate: `plotting.py` never computes and the analysis modules never
