@@ -1,36 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" width="1280" height="320" role="img" aria-label="Hiv-Drc-Model: simulated HIV prevalence in the DRC">
-  <rect width="1280" height="320" fill="#c4cbd2"/>
-  <rect x="0.5" y="0.5" width="1279" height="319" fill="none" stroke="#a1a9af"/>
-    <text x="56" y="104" font-family="'Hanken Grotesk', 'Helvetica Neue', Arial, sans-serif" font-size="50" font-weight="600" letter-spacing="-1" fill="#060e15">Hiv-Drc-Model</text>
-  <rect x="56" y="122" width="504" height="2" fill="#2b343b"/>
-  <text x="56" y="166" font-family="'Newsreader', Georgia, 'Times New Roman', serif" font-size="23" fill="#182027">A tested reproduction of a six-compartment</text>
-  <text x="56" y="198" font-family="'Newsreader', Georgia, 'Times New Roman', serif" font-size="23" fill="#182027">HIV/AIDS treatment model for the DRC.</text>
-  <text x="56" y="260" font-family="'Newsreader', Georgia, 'Times New Roman', serif" font-size="17" font-weight="500" fill="#3b434b">Python, R0 = 1.214450 at the 2020 baseline</text>
-  <rect x="640" y="36" width="596" height="248" fill="#e5eaef"/>
-  <rect x="640" y="36" width="596" height="2" fill="#060e15"/>
-  <text x="660" y="66" font-family="'Newsreader', Georgia, 'Times New Roman', serif" font-size="15" font-weight="500" fill="#3b434b">Infected share of the population, DRC 2020 baseline, years 0 to 50</text>
-  <line x1="704" y1="244.0" x2="1208" y2="244.0" stroke="#a1a9af" stroke-width="1"/>
-  <text x="694" y="248.0" text-anchor="end" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">0.0%</text>
-  <line x1="704" y1="192.0" x2="1208" y2="192.0" stroke="#a1a9af" stroke-width="1"/>
-  <text x="694" y="196.0" text-anchor="end" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">0.2%</text>
-  <line x1="704" y1="140.0" x2="1208" y2="140.0" stroke="#a1a9af" stroke-width="1"/>
-  <text x="694" y="144.0" text-anchor="end" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">0.4%</text>
-  <line x1="704" y1="88.0" x2="1208" y2="88.0" stroke="#a1a9af" stroke-width="1"/>
-  <text x="694" y="92.0" text-anchor="end" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">0.6%</text>
-  <line x1="704.0" y1="244" x2="704.0" y2="249" stroke="#2b343b" stroke-width="1"/>
-  <text x="704.0" y="264" text-anchor="middle" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">0</text>
-  <line x1="804.8" y1="244" x2="804.8" y2="249" stroke="#2b343b" stroke-width="1"/>
-  <text x="804.8" y="264" text-anchor="middle" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">10</text>
-  <line x1="905.6" y1="244" x2="905.6" y2="249" stroke="#2b343b" stroke-width="1"/>
-  <text x="905.6" y="264" text-anchor="middle" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">20</text>
-  <line x1="1006.4" y1="244" x2="1006.4" y2="249" stroke="#2b343b" stroke-width="1"/>
-  <text x="1006.4" y="264" text-anchor="middle" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">30</text>
-  <line x1="1107.2" y1="244" x2="1107.2" y2="249" stroke="#2b343b" stroke-width="1"/>
-  <text x="1107.2" y="264" text-anchor="middle" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">40</text>
-  <line x1="1208.0" y1="244" x2="1208.0" y2="249" stroke="#2b343b" stroke-width="1"/>
-  <text x="1208.0" y="264" text-anchor="middle" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#3b434b">50</text>
-  <line x1="704" y1="244" x2="1208" y2="244" stroke="#2b343b" stroke-width="1"/>
-  <polyline points="704.0,102.6 709.0,113.4 714.1,123.1 719.1,131.7 724.2,139.4 729.2,146.4 734.2,152.7 739.3,158.4 744.3,163.6 749.4,168.3 754.4,172.6 759.4,176.5 764.5,180.2 769.5,183.5 774.6,186.5 779.6,189.4 784.6,192.0 789.7,194.4 794.7,196.7 799.8,198.7 804.8,200.7 809.8,202.5 814.9,204.2 819.9,205.7 825.0,207.2 830.0,208.6 835.0,209.8 840.1,211.0 845.1,212.2 850.2,213.2 855.2,214.2 860.2,215.2 865.3,216.0 870.3,216.9 875.4,217.7 880.4,218.4 885.4,219.1 890.5,219.7 895.5,220.4 900.6,220.9 905.6,221.5 910.6,222.0 915.7,222.5 920.7,223.0 925.8,223.4 930.8,223.8 935.8,224.2 940.9,224.6 945.9,225.0 951.0,225.3 956.0,225.6 961.0,225.9 966.1,226.2 971.1,226.5 976.2,226.7 981.2,226.9 986.2,227.2 991.3,227.4 996.3,227.6 1001.4,227.8 1006.4,228.0 1011.4,228.1 1016.5,228.3 1021.5,228.5 1026.6,228.6 1031.6,228.7 1036.6,228.9 1041.7,229.0 1046.7,229.1 1051.8,229.2 1056.8,229.3 1061.8,229.4 1066.9,229.5 1071.9,229.6 1077.0,229.6 1082.0,229.7 1087.0,229.8 1092.1,229.8 1097.1,229.9 1102.2,230.0 1107.2,230.0 1112.2,230.1 1117.3,230.1 1122.3,230.1 1127.4,230.2 1132.4,230.2 1137.4,230.2 1142.5,230.2 1147.5,230.3 1152.6,230.3 1157.6,230.3 1162.6,230.3 1167.7,230.3 1172.7,230.3 1177.8,230.3 1182.8,230.3 1187.8,230.3 1192.9,230.3 1197.9,230.3 1203.0,230.3 1208.0,230.3" fill="none" stroke="#970d63" stroke-width="2" stroke-linejoin="round"/>
-  <circle cx="1208.0" cy="230.3" r="3.5" fill="#970d63"/>
-  <text x="1198.0" y="222.3" text-anchor="end" font-family="'IBM Plex Mono', Consolas, 'Courier New', monospace" font-size="12" fill="#060e15">0.053%</text>
+  <defs>
+    <pattern id="grille" width="3" height="3" patternUnits="userSpaceOnUse">
+      <rect width="1" height="3" fill="#f92434" fill-opacity="0.07"/>
+      <rect x="1" width="1" height="3" fill="#4ee11b" fill-opacity="0.07"/>
+      <rect x="2" width="1" height="3" fill="#376eff" fill-opacity="0.07"/>
+      <rect y="2" width="3" height="1" fill="#030104" fill-opacity="0.35"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="320" fill="#0f0415"/>
+    <text x="54" y="108" font-family="'Bungee', Impact, 'Arial Black', sans-serif" font-size="54" fill="#f92434">HIV-DRC-MODEL</text>
+  <text x="58" y="108" font-family="'Bungee', Impact, 'Arial Black', sans-serif" font-size="54" fill="#00d1da">HIV-DRC-MODEL</text>
+  <text x="56" y="108" font-family="'Bungee', Impact, 'Arial Black', sans-serif" font-size="54" fill="#f2ecf5">HIV-DRC-MODEL</text>
+  <rect x="56" y="126" width="72" height="6" fill="#f85200"/>
+  <text x="56" y="172" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="22" fill="#d9d1dd">A tested reproduction of a six-compartment</text>
+  <text x="56" y="203" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="22" fill="#d9d1dd">HIV/AIDS treatment model for the DRC.</text>
+  <text x="56" y="262" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#d5e51b">Python, R0 = 1.214450 at the 2020 baseline</text>
+  <rect x="646" y="40" width="590" height="244" rx="4" fill="#d5e51b"/>
+  <rect x="640" y="34" width="590" height="244" rx="4" fill="#190d20" stroke="#41304b" stroke-width="2"/>
+  <text x="660" y="64" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" fill="#a79dac">Infected share of the population, DRC 2020 baseline, years 0 to 50</text>
+  <line x1="706" y1="238.0" x2="1202" y2="238.0" stroke="#41304b" stroke-width="1"/>
+  <text x="696" y="242.0" text-anchor="end" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">0.0%</text>
+  <line x1="706" y1="187.3" x2="1202" y2="187.3" stroke="#41304b" stroke-width="1"/>
+  <text x="696" y="191.3" text-anchor="end" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">0.2%</text>
+  <line x1="706" y1="136.7" x2="1202" y2="136.7" stroke="#41304b" stroke-width="1"/>
+  <text x="696" y="140.7" text-anchor="end" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">0.4%</text>
+  <line x1="706" y1="86.0" x2="1202" y2="86.0" stroke="#41304b" stroke-width="1"/>
+  <text x="696" y="90.0" text-anchor="end" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">0.6%</text>
+  <text x="706.0" y="258" text-anchor="middle" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">0</text>
+  <text x="805.2" y="258" text-anchor="middle" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">10</text>
+  <text x="904.4" y="258" text-anchor="middle" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">20</text>
+  <text x="1003.6" y="258" text-anchor="middle" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">30</text>
+  <text x="1102.8" y="258" text-anchor="middle" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">40</text>
+  <text x="1202.0" y="258" text-anchor="middle" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#a79dac">50</text>
+  <line x1="706" y1="238" x2="1202" y2="238" stroke="#a79dac" stroke-width="2"/>
+  <polyline points="706.0,100.2 711.0,110.8 715.9,120.2 720.9,128.5 725.8,136.1 730.8,142.9 735.8,149.0 740.7,154.6 745.7,159.6 750.6,164.2 755.6,168.4 760.6,172.3 765.5,175.8 770.5,179.0 775.4,182.0 780.4,184.8 785.4,187.3 790.3,189.7 795.3,191.9 800.2,193.9 805.2,195.8 810.2,197.5 815.1,199.2 820.1,200.7 825.0,202.1 830.0,203.5 835.0,204.7 839.9,205.9 844.9,207.0 849.8,208.0 854.8,209.0 859.8,209.9 864.7,210.8 869.7,211.6 874.6,212.3 879.6,213.1 884.6,213.7 889.5,214.4 894.5,215.0 899.4,215.5 904.4,216.1 909.4,216.6 914.3,217.1 919.3,217.5 924.2,217.9 929.2,218.3 934.2,218.7 939.1,219.1 944.1,219.4 949.0,219.8 954.0,220.1 959.0,220.4 963.9,220.6 968.9,220.9 973.8,221.2 978.8,221.4 983.8,221.6 988.7,221.8 993.7,222.0 998.6,222.2 1003.6,222.4 1008.6,222.5 1013.5,222.7 1018.5,222.9 1023.4,223.0 1028.4,223.1 1033.4,223.3 1038.3,223.4 1043.3,223.5 1048.2,223.6 1053.2,223.7 1058.2,223.8 1063.1,223.9 1068.1,223.9 1073.0,224.0 1078.0,224.1 1083.0,224.1 1087.9,224.2 1092.9,224.3 1097.8,224.3 1102.8,224.4 1107.8,224.4 1112.7,224.4 1117.7,224.5 1122.6,224.5 1127.6,224.5 1132.6,224.6 1137.5,224.6 1142.5,224.6 1147.4,224.6 1152.4,224.7 1157.4,224.7 1162.3,224.7 1167.3,224.7 1172.2,224.7 1177.2,224.7 1182.2,224.7 1187.1,224.7 1192.1,224.7 1197.0,224.7 1202.0,224.7" fill="none" stroke="#f85200" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="1197.0" y="219.7" width="10" height="10" fill="#d5e51b"/>
+  <text x="1188.0" y="214.7" text-anchor="end" font-family="'Chivo', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#d5e51b">0.053%</text>
+  <rect x="641" y="35" width="588" height="242" rx="3" fill="url(#grille)"/>
 </svg>
