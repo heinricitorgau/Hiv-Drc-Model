@@ -1,0 +1,21 @@
+name: Feature or analysis request
+description: Propose a new capability, observation operator, data source or study.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What question should this answer?
+      description: The scientific or practical question, not just the feature.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: How you would implement it, and which module it belongs in.
+  - type: textarea
+    id: verification
+    attributes:
+      label: How would we know it is correct?
+      description: An independent derivation, known answer or mathematical property a test could check against.

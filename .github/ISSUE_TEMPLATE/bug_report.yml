@@ -1,0 +1,42 @@
+name: Bug report
+description: Something crashes, or produces a result that is wrong.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Wide intervals, `inf` standard errors and correlations near ±1 are
+        often documented non-identifiability rather than bugs — the README's inverse-problem,
+        scale-up and prior sections explain when to expect them.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, including the full traceback or the wrong number.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: The value or behaviour you expected, and where that expectation comes from (the paper, a derivation, the README).
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: A minimal script or command.
+      render: python
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit
+      description: Output of `git rev-parse --short HEAD`.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, and `pip show numpy scipy emcee` if relevant.
