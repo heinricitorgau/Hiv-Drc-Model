@@ -202,7 +202,8 @@ relative measurement-noise level, fitted jointly rather than assumed.
 
 ### Interactive dashboard
 
-`app.py` puts the model behind a browser UI, for exploring scenarios without writing code:
+`app.py` puts the model behind a browser UI, for exploring scenarios without writing code. A
+deployed copy runs at [hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app); to run it locally:
 
 ```bash
 pip install -e ".[app]"

@@ -6,12 +6,15 @@
 
 **English** · [繁體中文](README.zh-TW.md)
 
+**[▶ Try the live dashboard](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)** — no install needed.
+
 > HIV/AIDS transmission dynamics with treatment: the DRC case, reproduced and then run backwards.
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Tests](https://github.com/heinricitorgau/hiv-drc-model/actions/workflows/ci.yml/badge.svg)](https://github.com/heinricitorgau/hiv-drc-model/actions/workflows/ci.yml)
 [![Paper](https://img.shields.io/badge/DOI-10.5556%2Fj.tkjm.57.5817.2026-orange)](https://doi.org/10.5556/j.tkjm.57.5817.2026)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/heinricitorgau/hiv-drc-model/blob/main/notebooks/01_inverse_problem.ipynb)
 
 A complete, tested reproduction of the six-compartment HIV/AIDS treatment model of
@@ -67,7 +70,8 @@ replicates at 10% noise: the same coverage in 2–4× tighter intervals.
 <p align="center"><img src="docs/img/real_data.png" alt="Model against UNAIDS ART coverage and PLHIV for the DRC, 2005 to 2024" width="88%"></p>
 
 That is model misspecification, not a bad optimiser. The [full write-up](docs/REPORT.md#meeting-real-data)
-measures it window by window, and the [informative-priors section](docs/REPORT.md#informative-priors-and-whether-they-earned-it)
+measures it window by window (or flip the scale-up on yourself in the
+[live dashboard](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)'s third tab), and the [informative-priors section](docs/REPORT.md#informative-priors-and-whether-they-earned-it)
 shows that three of the nine scale-up parameters are echoes of their priors rather than
 anything the data determined.
 
@@ -104,7 +108,7 @@ python -m hiv_drc          # all twelve figures into figures/, about 30 seconds
 streamlit run app.py       # the dashboard
 ```
 
-Or skip the install and open a notebook in Colab:
+Or skip the install entirely: the [dashboard runs online](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app), and both notebooks open in Colab:
 [the inverse problem](https://colab.research.google.com/github/heinricitorgau/hiv-drc-model/blob/main/notebooks/01_inverse_problem.ipynb) ·
 [Bayesian uncertainty](https://colab.research.google.com/github/heinricitorgau/hiv-drc-model/blob/main/notebooks/02_bayesian_uncertainty.ipynb).
 
