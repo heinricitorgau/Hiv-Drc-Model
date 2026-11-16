@@ -193,7 +193,7 @@ print(posterior.summary())
 
 ### 互動式儀表板
 
-`app.py` 把模型放進瀏覽器介面，不用寫程式就能探索各種情境：
+`app.py` 把模型放進瀏覽器介面，不用寫程式就能探索各種情境。線上部署版在 [hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)；要在本機執行：
 
 ```bash
 pip install -e ".[app]"
