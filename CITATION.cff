@@ -7,6 +7,14 @@ title: "Hiv-Drc-Model: a tested reproduction of the DRC HIV/AIDS treatment model
 authors:
   - alias: heinricitorgau
 version: 1.0.0
+doi: 10.5281/zenodo.24274982
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24274982
+    description: Zenodo concept DOI (all versions; resolves to the latest)
+  - type: doi
+    value: 10.5281/zenodo.24274983
+    description: Zenodo DOI of version 1.0.0
 license: MIT
 repository-code: "https://github.com/heinricitorgau/hiv-drc-model"
 abstract: >-

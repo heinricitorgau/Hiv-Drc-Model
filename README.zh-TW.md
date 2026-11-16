@@ -14,6 +14,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Tests](https://github.com/heinricitorgau/hiv-drc-model/actions/workflows/ci.yml/badge.svg)](https://github.com/heinricitorgau/hiv-drc-model/actions/workflows/ci.yml)
 [![Paper](https://img.shields.io/badge/DOI-10.5556%2Fj.tkjm.57.5817.2026-orange)](https://doi.org/10.5556/j.tkjm.57.5817.2026)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24274982.svg)](https://doi.org/10.5281/zenodo.24274982)
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/heinricitorgau/hiv-drc-model/blob/main/notebooks/01_inverse_problem.ipynb)
 
@@ -122,7 +123,7 @@ streamlit run app.py       # 儀表板
 }
 ```
 
-如果也要引用這份實作，請使用 GitHub 側欄的 **Cite this repository** 按鈕，它讀取的是 [`CITATION.cff`](CITATION.cff)。
+如果也要引用這份實作，請使用 GitHub 側欄的 **Cite this repository** 按鈕，它讀取的是 [`CITATION.cff`](CITATION.cff)。每個版本都會存檔到 Zenodo，[doi:10.5281/zenodo.24274982](https://doi.org/10.5281/zenodo.24274982) 永遠指向最新版。
 
 這個 repository 是獨立的重現，與原作者沒有關聯；程式碼中的任何錯誤都是這份實作的問題，而不是論文的問題。
 
