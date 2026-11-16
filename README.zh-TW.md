@@ -6,12 +6,15 @@
 
 [English](README.md) · **繁體中文**
 
+**[▶ 線上試用互動儀表板](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)**，不需要安裝。
+
 > 含治療的 HIV/AIDS 傳播動態：剛果民主共和國（DRC）案例的完整重現，並把模型倒過來求解。
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Tests](https://github.com/heinricitorgau/hiv-drc-model/actions/workflows/ci.yml/badge.svg)](https://github.com/heinricitorgau/hiv-drc-model/actions/workflows/ci.yml)
 [![Paper](https://img.shields.io/badge/DOI-10.5556%2Fj.tkjm.57.5817.2026-orange)](https://doi.org/10.5556/j.tkjm.57.5817.2026)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/heinricitorgau/hiv-drc-model/blob/main/notebooks/01_inverse_problem.ipynb)
 
 這是下面這篇論文中六倉室 HIV/AIDS 治療模型的完整、有測試的重現：
@@ -53,7 +56,7 @@ $R_0 = 1.214450$，閉式解與 $FV^{-1}$ 的譜半徑一致，論文發表值�
 
 <p align="center"><img src="docs/img/real_data.png" alt="模型與 UNAIDS 的 DRC ART 覆蓋率及 PLHIV 對照，2005 至 2024 年" width="88%"></p>
 
-這是模型設定錯誤（misspecification），不是最佳化器不好。[完整報告](docs/REPORT.zh-TW.md#面對真實資料)逐個期間量測了這件事；[資訊性先驗那一節](docs/REPORT.zh-TW.md#資訊性先驗以及它們是否名副其實)則顯示九個擴大期參數中有三個只是先驗的回音，並不是資料決定的。
+這是模型設定錯誤（misspecification），不是最佳化器不好。[完整報告](docs/REPORT.zh-TW.md#面對真實資料)逐個期間量測了這件事（也可以在[線上儀表板](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)的第三個分頁自己切換 logistic 擴大看看）；[資訊性先驗那一節](docs/REPORT.zh-TW.md#資訊性先驗以及它們是否名副其實)則顯示九個擴大期參數中有三個只是先驗的回音，並不是資料決定的。
 
 ---
 
@@ -83,7 +86,7 @@ python -m hiv_drc          # 十二張圖全部寫進 figures/，約 30 秒
 streamlit run app.py       # 儀表板
 ```
 
-不想安裝的話，也可以直接在 Colab 開啟 notebook：
+不想安裝的話，[儀表板可以直接線上使用](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)，兩個 notebook 也能在 Colab 開啟：
 [反問題](https://colab.research.google.com/github/heinricitorgau/hiv-drc-model/blob/main/notebooks/01_inverse_problem.ipynb) ·
 [貝氏不確定性](https://colab.research.google.com/github/heinricitorgau/hiv-drc-model/blob/main/notebooks/02_bayesian_uncertainty.ipynb)。
 
