@@ -1,11 +1,11 @@
 """One-off measurement: how do the frequentist Wald interval and the MCMC
 credible interval compare at 10% noise, where the Wald interval's own coverage
-study (see the README) already drops to 88%?
+study (see docs/REPORT.md) already drops to 88%?
 
 Not part of the test suite - too slow, and coverage is a statement about
 long-run frequency rather than a pass/fail property of one run, exactly like
 the frequentist 40-replicate table this mirrors. Run once, read the numbers
-off, put them in the README by hand.
+off, put them in docs/REPORT.md by hand.
 
 Per-replicate results are written to `coverage_study.json` so the summary can
 be re-derived without paying for the sampling again.

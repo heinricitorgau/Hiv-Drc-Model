@@ -9,8 +9,11 @@ A reproduction of Mbayi, Mpompi & Munyakazi, *Tamkang Journal of Mathematics* **
 inverse problem: recovering rates from noisy surveillance-shaped data by least squares and MCMC.
 Populations are in **millions of people**, time in **years**, so every rate is 1/year.
 
-The README is not a summary — it is the write-up of the results, including the ones that came out
-negative. Read the relevant section before changing anything it describes.
+`docs/REPORT.md` is the write-up of the results, including the ones that came out negative; read
+the relevant section before changing anything it describes. The README is the short version: a
+few headline numbers and the images in `docs/img/`, which `scripts/readme_figures.py` regenerates.
+Installation, CLI and API reference live in `docs/USAGE.md`. Every one of these has a `.zh-TW.md`
+twin, and the two languages are expected to stay in step.
 
 ## Commands
 
@@ -32,9 +35,9 @@ Two things make the suite slower than it looks: `--doctest-modules` is on, so **
 example in `src/` is executed** and a stale one is a test failure; and the Bayesian tests run real
 (small) MCMC chains, because convergence diagnostics cannot be tested without sampling.
 
-`scripts/` holds one-off studies behind specific README claims. They are not part of the suite and
-are expected to take minutes to hours. `scripts/fetch_worldbank.py` is the only code that touches
-the network.
+`scripts/` holds one-off studies behind specific claims in `docs/REPORT.md`. They are not part of
+the suite and are expected to take minutes to hours. `scripts/fetch_worldbank.py` is the only code
+that touches the network.
 
 **Dependencies live in `pyproject.toml`** — runtime in `[project].dependencies`, tooling in the
 `dev` extra, streamlit in both `dev` and `app`. `requirements.txt` is a mirror kept only for
@@ -87,7 +90,7 @@ data, where the generator recorded the σ it used.
 
 **Non-identifiability is a documented finding, not a bug to hide.** Wide or infinite intervals,
 `inf` standard errors and correlations near ±1 are reported deliberately (see the scale-up and
-prior sections of the README). Do not narrow bounds or drop parameters to make output look tidier.
+prior sections of `docs/REPORT.md`). Do not narrow bounds or drop parameters to make output look tidier.
 
 **`app.py` picks its figure language from the fonts present** — Chinese where a CJK font exists,
 English where none does. matplotlib does not fail on a missing glyph; it draws a blank box, which
@@ -111,4 +114,5 @@ is absent, and both the `dev` and `app` extras install it.
 
 Commit messages here are narrative and report what was measured, including negative results and
 what was ruled out — match that shape rather than writing one-line summaries. When a measured
-number changes, the README's corresponding claim is expected to change with it.
+number changes, the corresponding claim in `docs/REPORT.md` (and the README, if it is a headline
+number) is expected to change with it.

@@ -279,7 +279,7 @@ def test_tight_noise_recovery_lands_close_to_the_truth(posterior_tight: Bayesian
     A 95% credible interval is, by construction, expected to miss the truth
     on roughly one run in twenty - asserting it always covers on one fixed
     seed would be asserting a coin never comes up tails. Coverage is instead
-    checked in aggregate across many replicates for the README's comparison
+    checked in aggregate across many replicates for the report's comparison
     against the frequentist Wald interval; here it is enough that the point
     estimate itself is in the right neighbourhood.
     """

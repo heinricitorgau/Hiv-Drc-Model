@@ -6,8 +6,8 @@ body:
     attributes:
       value: |
         Thanks for reporting. Wide intervals, `inf` standard errors and correlations near ±1 are
-        often documented non-identifiability rather than bugs — the README's inverse-problem,
-        scale-up and prior sections explain when to expect them.
+        often documented non-identifiability rather than bugs — the inverse-problem,
+        scale-up and prior sections of docs/REPORT.md explain when to expect them.
   - type: textarea
     id: what-happened
     attributes:
@@ -19,7 +19,7 @@ body:
     id: expected
     attributes:
       label: What you expected
-      description: The value or behaviour you expected, and where that expectation comes from (the paper, a derivation, the README).
+      description: The value or behaviour you expected, and where that expectation comes from (the paper, a derivation, docs/REPORT.md).
     validations:
       required: true
   - type: textarea

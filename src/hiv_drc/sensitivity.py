@@ -14,8 +14,8 @@ Both are asserted in the test suite.
 Local indices only describe one point in parameter space.  This module also
 provides a *global* screen: Latin hypercube sampling over all 13 parameters at
 once, scored with partial rank correlation coefficients.  The two views can
-disagree, and where they do the disagreement is the interesting part — see the
-project README.
+disagree, and where they do the disagreement is the interesting part — see
+docs/REPORT.md.
 """
 
 from __future__ import annotations
