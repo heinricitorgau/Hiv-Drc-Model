@@ -5,7 +5,9 @@ message: >-
 type: software
 title: "Hiv-Drc-Model: a tested reproduction of the DRC HIV/AIDS treatment model, with parameter estimation from noisy data"
 authors:
-  - alias: heinricitorgau
+  - family-names: Kao
+    given-names: En-Tsai
+    alias: heinricitorgau
 version: 1.0.0
 doi: 10.5281/zenodo.24274982
 identifiers:
