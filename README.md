@@ -14,6 +14,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Tests](https://github.com/heinricitorgau/hiv-drc-model/actions/workflows/ci.yml/badge.svg)](https://github.com/heinricitorgau/hiv-drc-model/actions/workflows/ci.yml)
 [![Paper](https://img.shields.io/badge/DOI-10.5556%2Fj.tkjm.57.5817.2026-orange)](https://doi.org/10.5556/j.tkjm.57.5817.2026)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24274982.svg)](https://doi.org/10.5281/zenodo.24274982)
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://hiv-drc-model-6h4eabztaookr4gj4steeg.streamlit.app)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/heinricitorgau/hiv-drc-model/blob/main/notebooks/01_inverse_problem.ipynb)
 
@@ -145,7 +146,8 @@ If you use this code, please cite the original paper:
 ```
 
 To cite this implementation as well, use GitHub's **Cite this repository** button, which reads
-[`CITATION.cff`](CITATION.cff).
+[`CITATION.cff`](CITATION.cff). Every release is archived on Zenodo under
+[doi:10.5281/zenodo.24274982](https://doi.org/10.5281/zenodo.24274982), which always resolves to the latest version.
 
 This repository is an independent reproduction. It is not affiliated with the authors, and
 any error in the code is the fault of this implementation rather than of the paper.
