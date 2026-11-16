@@ -250,7 +250,7 @@ class Parameters:
         published λ = 0.0015/yr - a mean time to diagnosis of 667 years -
         driving α to 500 still caps ART coverage near 56%, against the 71%
         the DRC actually reached.  No α, constant or scaled up, can clear
-        that; see the README.
+        that; see docs/REPORT.md.
         """
         if self.lam_ceiling is None:
             return self.lam

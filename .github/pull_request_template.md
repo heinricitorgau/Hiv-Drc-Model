@@ -12,6 +12,6 @@
 - [ ] `pytest` passes (docstring examples included)
 - [ ] New tests check against an independent derivation or a mathematical property, not the code itself
 - [ ] For a bug fix: the new test was observed failing against the defect
-- [ ] README claims updated if a measured number changed
+- [ ] docs/REPORT.md (and README headline) claims updated if a measured number changed
 - [ ] Layering kept: plotting does not compute, analysis does not plot, `app.py` computes nothing
 - [ ] A new dependency is added to both `pyproject.toml` and `requirements.txt`

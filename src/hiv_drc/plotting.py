@@ -700,7 +700,7 @@ def plot_bayes_vs_frequentist(result: BayesianFitResult) -> Figure:
     Where the two disagree - one visibly wider, narrower, or off-centre from
     the other - the quadratic approximation or the wide safety-box bounds
     behind the Wald interval were doing some of the work; the coverage study
-    in the README quantifies how that gap grows with measurement noise.
+    in docs/REPORT.md quantifies how that gap grows with measurement noise.
 
     Each rate is shown as estimate / reference, where the reference is the
     true value when known and the posterior median otherwise, since the

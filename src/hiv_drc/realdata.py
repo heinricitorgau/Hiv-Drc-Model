@@ -18,7 +18,7 @@ this wrong does not raise, it silently rescales the epidemic by :math:`10^6`.
 
 **What is actually measured.** The published series are ``plhiv`` and
 ``art_coverage``, not compartments - see :mod:`hiv_drc.observables`. The
-observability study in the README found that pairing is close to the best
+observability study in docs/REPORT.md found that pairing is close to the best
 available for identifying both rates, which is fortunate, since it is also all
 there is.
 

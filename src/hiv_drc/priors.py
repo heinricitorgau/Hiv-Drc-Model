@@ -7,7 +7,7 @@ does this data say", because the answer then comes from the data alone.
 It stops being enough when the model has more parameters than the data can
 separate.  Fitting a nine-parameter scale-up to twenty annual points of two
 series leaves runs with indistinguishable cost landing on parameters that
-differ by two orders of magnitude (see the README).  Informative priors are
+differ by two orders of magnitude (see docs/REPORT.md).  Informative priors are
 the standard remedy: bring in what is known from outside this dataset, and
 the posterior concentrates.
 

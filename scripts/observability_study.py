@@ -12,7 +12,7 @@ information to pin down beta and alpha at all". This script measures that by
 fitting the same underlying epidemic through several observation sets and
 comparing the resulting uncertainty.
 
-Run once, read the numbers off, put them in the README by hand.
+Run once, read the numbers off, put them in docs/REPORT.md by hand.
 """
 
 from __future__ import annotations

@@ -165,11 +165,11 @@ def test_an_incomplete_untreated_split_is_rejected():
         initial_state_from_data(1.0, 0.5, 10.0, untreated_split={"I1": 1.0})
 
 
-# -- the finding the README reports -----------------------------------------
+# -- the finding the report states ------------------------------------------
 
 
 def test_table_2_disagrees_with_the_2020_data_on_treatment():
-    """Pins down the discrepancy the README and realdata's docstring describe.
+    """Pins down the discrepancy docs/REPORT.md and realdata's docstring describe.
 
     Not a defect in this package - a property of the published initial
     conditions - but one that silently biases any real-data fit, so it is

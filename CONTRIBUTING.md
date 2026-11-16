@@ -4,14 +4,14 @@ Thanks for taking an interest. This repository reproduces Mbayi, Mpompi & Munyak
 *Tamkang Journal of Mathematics* **57**(2), 149–169 (2026), and then pushes on it: parameter
 recovery, identifiability, real World Bank data, and Bayesian uncertainty. Contributions of every
 size are welcome — a typo, a failing case, a new observation operator, or a result that
-contradicts one in the README.
+contradicts one in the [write-up](docs/REPORT.md).
 
 By participating you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Before you start
 
-- **Read the relevant README section.** The README is the write-up of the results, including the
-  negative ones. If your change touches something it describes, the claim and the code have to
+- **Read the relevant section of [docs/REPORT.md](docs/REPORT.md).** It is the write-up of the
+  results, including the negative ones; the README carries only the headline version. If your change touches something it describes, the claim and the code have to
   stay in agreement.
 - **For anything larger than a small fix, open an issue first** so we can agree on the approach
   before you spend time on it.
@@ -79,7 +79,9 @@ A few invariants that are easy to break by accident:
 
 - Commit messages here are narrative: say what changed, what you measured, and what you ruled
   out — negative results included. A one-line summary is rarely enough.
-- If a measured number changes, update the README claim that reports it in the same pull request.
+- If a measured number changes, update the claim that reports it in docs/REPORT.md (and the README, if it is a headline
+  number) in the same pull request. If a figure the README shows changes, re-run
+  `python scripts/readme_figures.py` and commit the images.
 - Keep a pull request to one concern. Fill in the pull request template.
 
 ## Licence

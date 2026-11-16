@@ -7,7 +7,7 @@ theory from returning numbers that would look fine and mean nothing.
 The one positive result worth pinning down is the structural ceiling: with
 the published diagnosis rate, no treatment-uptake rate however large can push
 ART coverage past about 56%, because alpha drains a queue that only lambda
-fills. That is the finding behind the README's scale-up section, and it would
+fills. That is the finding behind the scale-up section of docs/REPORT.md, and it would
 be easy to lose in a future refactor.
 """
 

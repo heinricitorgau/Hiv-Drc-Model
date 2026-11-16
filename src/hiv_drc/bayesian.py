@@ -5,7 +5,7 @@ value, and how uncertain is it" by finding the least-squares optimum and
 reading curvature off the Jacobian there (the Wald interval).  That answer is
 only as good as the assumption behind it: that the log-likelihood surface is
 locally quadratic at the optimum.  The frequentist module's own coverage study
-(see the README) shows that assumption under strain at 10% measurement noise,
+(see docs/REPORT.md) shows that assumption under strain at 10% measurement noise,
 where the nominal 95% interval covers the true parameter only 88% of the time.
 
 This module makes no such assumption.  It samples the actual posterior with
