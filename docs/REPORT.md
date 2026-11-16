@@ -1,0 +1,751 @@
+# Hiv-Drc-Model — the full write-up
+
+**English** · [繁體中文](REPORT.zh-TW.md) · [← back to the README](../README.md)
+
+Everything the package measured, including the results that came out negative. The [README](../README.md) carries the short version; installation and the API are in [USAGE.md](USAGE.md).
+
+## Contents
+
+- [The model](#the-model)
+- [The basic reproduction number](#the-basic-reproduction-number)
+- [Results](#results)
+- [The inverse problem](#the-inverse-problem)
+- [What can actually be observed](#what-can-actually-be-observed)
+- [Meeting real data](#meeting-real-data)
+- [Time-varying rates](#time-varying-rates)
+- [Informative priors, and whether they earned it](#informative-priors-and-whether-they-earned-it)
+- [Bayesian uncertainty](#bayesian-uncertainty)
+- [Testing and verification](#testing-and-verification)
+
+---
+
+## The model
+
+Six compartments, all counted in **millions of people**, with time in **years**.
+
+| Symbol | Compartment | Description |
+| --- | --- | --- |
+| $S$ | Susceptible | At risk, not infected |
+| $I_1$ | Infected, unaware | Asymptomatic, status unknown to them |
+| $I_2$ | Infected, aware | Asymptomatic, diagnosed |
+| $A$ | Symptomatic | Has progressed to AIDS |
+| $T$ | On treatment | Receiving antiretroviral therapy |
+| $R$ | Behaviour-changed | Left the susceptible pool through protective behaviour |
+
+Writing $N = S + I_1 + I_2 + A + T + R$ for the total population, the system is
+
+$$
+\begin{aligned}
+\frac{dS}{dt}   &= \Lambda - \frac{\beta S}{N}\left(I_1 + cI_2 + dA\right) - \mu S - \phi S \\[4pt]
+\frac{dI_1}{dt} &= \frac{\beta S}{N}\left(I_1 + cI_2 + dA\right) - \left(\sigma_1 + \lambda + \mu\right) I_1 \\[4pt]
+\frac{dI_2}{dt} &= \lambda I_1 - \left(\sigma_2 + \mu + \alpha\right) I_2 + \kappa_2 T \\[4pt]
+\frac{dA}{dt}   &= \sigma_1 I_1 + \sigma_2 I_2 - \left(\mu + \delta_1 + \kappa_1\right) A \\[4pt]
+\frac{dT}{dt}   &= \alpha I_2 + \kappa_1 A - \left(\kappa_2 + \mu + \delta_2\right) T \\[4pt]
+\frac{dR}{dt}   &= \phi S - \mu R
+\end{aligned}
+$$
+
+Three features are worth pointing out before reading the results.
+
+**Transmission is driven mainly by the undiagnosed.** All three infected classes transmit,
+but $I_2$ and $A$ do so at reduced relative infectiousness $c = 0.03$ and $d = 0.001$.
+Diagnosis is therefore modelled as an intervention in itself, independent of treatment.
+
+**Treatment is not an absorbing state.** The $\kappa_2 T$ term returns people from $T$ to
+$I_2$, representing interruption or failure of therapy. That feedback loop is what makes
+the endemic equilibrium impossible to write down in closed form.
+
+**The population is not constant.** Summing the six equations gives
+
+$$\frac{dN}{dt} = \Lambda - \mu N - \delta_1 A - \delta_2 T,$$
+
+so $N(t)$ is bounded above by the carrying capacity $\Lambda/\mu = 531.69$ million but is
+free to grow toward it. This identity is checked in the test suite; it is the quickest way
+to catch a term that leaves one compartment without arriving in another.
+
+### Baseline parameters (DRC, 2020)
+
+Reproduced from Table 3 of the paper. All rates are per year; $c$ and $d$ are dimensionless.
+
+| Parameter | Symbol | Value | Meaning |
+| --- | --- | --- | --- |
+| `Lambda` | $\Lambda$ | 8.8261 | Recruitment into $S$ (millions/year) |
+| `beta` | $\beta$ | 0.15 | Effective contact rate |
+| `mu` | $\mu$ | 0.0166 | Natural death rate |
+| `phi` | $\phi$ | 0.083 | Rate of adopting protective behaviour |
+| `c` | $c$ | 0.03 | Relative infectiousness of $I_2$ |
+| `d` | $d$ | 0.001 | Relative infectiousness of $A$ |
+| `sigma1` | $\sigma_1$ | 0.0025 | Progression $I_1 \to A$ |
+| `sigma2` | $\sigma_2$ | 0.06 | Progression $I_2 \to A$ |
+| `lam` | $\lambda$ | 0.0015 | Diagnosis $I_1 \to I_2$ |
+| `delta1` | $\delta_1$ | 0.0909 | Disease-induced death in $A$ |
+| `delta2` | $\delta_2$ | 0.0667 | Disease-induced death on treatment |
+| `alpha` | $\alpha$ | 0.035 | Treatment uptake $I_2 \to T$ |
+| `kappa1` | $\kappa_1$ | 0.2 | Treatment uptake $A \to T$ |
+| `kappa2` | $\kappa_2$ | 0.04 | Return $T \to I_2$ |
+
+Initial conditions from Table 2, in millions:
+$S(0) = 88.516$, $I_1(0) = 0.014$, $I_2(0) = 0.0846$, $A(0) = 0.30832$, $T(0) = 0.07708$, $R(0) = 0$.
+
+---
+
+## The basic reproduction number
+
+With $a_1 = \sigma_1 + \lambda + \mu$, $a_2 = \sigma_2 + \mu + \alpha$,
+$a_3 = \mu + \delta_1 + \kappa_1$, $a_4 = \kappa_2 + \mu + \delta_2$, and
+$D = a_1\left(a_2a_3a_4 - \kappa_1\kappa_2\sigma_2 - \alpha\kappa_2 a_3\right)$, the paper's
+next-generation calculation gives
+
+$$R_0 = \frac{\beta\mu}{\mu + \phi}\left(R_1 + R_2 + R_3\right),$$
+
+$$
+R_1 = \frac{1}{a_1}, \qquad
+R_2 = \frac{c\left(\lambda a_3 a_4 + \kappa_1\kappa_2\sigma_1\right)}{D}, \qquad
+R_3 = \frac{d\left(a_4\left(\sigma_1\sigma_2 + \mu\sigma_1 + \lambda\sigma_2\right) + \alpha\sigma_1\left(\mu + \delta_2\right)\right)}{D}.
+$$
+
+Each term is the contribution of one infectious class, and the prefactor $\mu/(\mu+\phi)$ is
+the susceptible fraction $S^*/N^*$ at the disease-free equilibrium — which is how behaviour
+change $\phi$ enters.
+
+This package implements the closed form **and**, independently, assembles the
+next-generation matrices $F$ and $V$ and takes the spectral radius of $FV^{-1}$. The two
+agree to twelve significant figures, and the test suite requires them to keep agreeing over
+hundreds of randomly perturbed parameter sets. Without that second route, a typo in the
+algebra would propagate silently into every figure in the repository.
+
+---
+
+## Results
+
+### The published value is reproduced
+
+```
+R1 = 48.543689   (unaware infectives I1)
+R2 =  0.033712   (aware infectives I2)
+R3 =  0.000614   (symptomatic A)
+
+closed form (paper eq. 3.9-3.12) : R0 = 1.214450376356
+spectral radius of F V^-1        : R0 = 1.214450376356
+paper                            : R0 = 1.2145
+```
+
+$R_1$ dominates by three orders of magnitude. Because $c$ and $d$ are so small, essentially
+all onward transmission comes from people who do not know they are infected — so in this
+model diagnosis rate matters more than treatment capacity.
+
+### The stability theorem holds numerically
+
+The paper proves that the disease-free equilibrium is locally asymptotically stable when
+$R_0 < 1$ and that the endemic equilibrium is stable when $R_0 > 1$. Sweeping $\beta$ over
+41 points spanning the threshold:
+
+```
+sign(max Re lambda at DFE) disagrees with sign(R0 - 1) at 0 / 41 points
+largest max Re(lambda) at the attractor: -1.63e-04   (should be <= 0)
+```
+
+At the DRC baseline:
+
+| | $S$ | $I_1$ | $I_2$ | $A$ | $T$ | $R$ | max Re $\lambda$ |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Disease-free | 88.6155 | 0 | 0 | 0 | 0 | 443.0773 | **+0.004416** (unstable) |
+| Endemic | 70.8708 | 85.7947 | 1.9860 | 1.0850 | 2.3238 | 354.3538 | **−0.003593** (stable) |
+
+The bifurcation is **forward** (supercritical): the endemic branch leaves zero exactly at
+$R_0 = 1$, with no backward branch below it. That is a substantive epidemiological result —
+it means driving $R_0$ below one is by itself sufficient to clear the infection, with no
+bistable region requiring a stricter target.
+
+**The critical contact rate is $\beta = 0.1235$**, which is **17.7% below** the DRC baseline
+of 0.15.
+
+### Local and global sensitivity disagree in a useful way
+
+The paper's local indices are reproduced exactly, including two with exact closed forms:
+$R_0$ is linear in $\beta$, so its index is exactly $+1$, and the index for $\phi$ is exactly
+$-\phi/(\mu+\phi) = -0.8333$.
+
+A Latin-hypercube screen (n = 1000, every parameter varied by ±25% simultaneously) gives the
+same top ranking, but two differences stand out:
+
+| Parameter | PRCC on $R_0$ | Local index | PRCC on infected at $t = 50$ |
+| --- | --- | --- | --- |
+| `beta` | +0.979 | +1.000 | +0.987 |
+| `phi` | −0.970 | −0.833 | −0.957 |
+| `sigma1` | −0.469 | −0.121 | −0.128 |
+| `lam` | −0.362 | −0.072 | −0.175 |
+| `mu` | +0.133 | +0.027 | **−0.767** |
+| `delta2` | −0.003 | −0.0002 | −0.377 |
+| `c` | −0.011 | +0.0007 | +0.263 |
+
+First, $\sigma_1$ is understated by the local analysis — its influence roughly quadruples once
+the other parameters are allowed to move.
+
+Second, and more importantly: **$\mu$ barely enters $R_0$ (local index +0.027) yet dominates
+the 50-year infected burden (PRCC −0.767)**. The same is true to a lesser degree of
+$\delta_2$, $c$ and $\kappa_2$. An analysis that ranks interventions by their effect on $R_0$
+alone would miss all of them. $R_0$ is a statement about the long-run threshold, not about
+what the epidemic does over a planning horizon.
+
+Across the sampled band, **17.4% of parameter draws put $R_0$ below 1** — the DRC is not far
+from the threshold.
+
+### A caveat about the 50-year window
+
+The endemic equilibrium carries 91.2 million infected at a prevalence of 17.7%. Over the
+paper's 50-year simulation window the infected total falls from 0.484 million to a minimum of
+0.160 and ends at 0.178 — three orders of magnitude away. This is not a contradiction: the
+slowest timescale
+in the system is $1/\mu \approx 60$ years, so **the published trajectories describe a transient,
+not the long-run state**. The $R$ compartment is likewise still filling at $t = 50$ (it has no
+outflow but natural death), and $N$ is still climbing toward $\Lambda/\mu$. Anyone comparing
+these curves to observed DRC data should keep the distinction in view.
+
+---
+
+## The inverse problem
+
+Everything above runs the model forward. This section runs it backwards.
+
+### Why it is a different problem
+
+The paper's parameters come from the literature, but the two that matter most for policy are
+the two nobody measures directly. $\beta$ is an effective contact rate, a product of contact
+frequency and per-contact transmission probability that has no instrument. $\alpha$ is the
+rate at which diagnosed people start treatment, which programme registers only see
+indirectly. Both have to be **inferred from their consequences**.
+
+That inference is an inverse problem, and it is harder than the forward one in a specific
+way: the forward map is a well-posed integration, while its inverse need not be unique or
+stable. Two different parameter pairs can produce trajectories that differ by less than the
+measurement noise, and no algorithm can separate them.
+
+### The set-up
+
+A surveillance system observes two of the six compartments — symptomatic cases $A$ and people
+on treatment $T$. The other four, including *both* infected classes, are latent; undiagnosed
+infection is precisely what is not counted. `synthetic.py` generates 31 annual observations
+over 30 years from the published parameters and corrupts them with Gaussian error.
+`estimation.py` is then handed the noisy series alone, with the generating values withheld,
+and asked to recover them by solving
+
+$$
+\hat{\theta} \;=\; \arg\min_{\theta \in [\ell,\, u]}
+    \sum_{k} \sum_{i} w_k^2 \left(y_k(t_i;\theta) - \hat{y}_{k,i}\right)^2
+$$
+
+with `scipy.optimize.least_squares` (trust-region reflective). Every evaluation of the
+objective is a full integration of the six-compartment system.
+
+### Four decisions that determine whether the answer is trustworthy
+
+| Decision | Why it matters here |
+| --- | --- |
+| **Bounds** | Every rate is non-negative. Unbounded, a trust-region step tries $\beta < 0$, which turns the infection term into a *source* of susceptibles and the integration diverges. The box in `PARAMETER_BOUNDS` is wide enough not to be doing the estimating itself. |
+| **Weighting** | A sum of squares in raw units is dominated by the largest compartment. Observing $S$ (≈ 88 million) beside $A$ (≈ 0.05 million), the $S$ residuals outweigh the $A$ residuals by roughly 800 : 1 and the fit ignores $A$ entirely. Each series is divided by its own magnitude, computed from the observations alone so nothing about the truth leaks in. |
+| **Finite-difference step** | The residual is only accurate to the integrator's tolerance. Differencing it with the default $\sqrt{\epsilon} \approx 1.5 \times 10^{-8}$ amplifies solver noise by $10^{8}$ and the fit stalls short of the minimum. `diff_step` defaults to $10^{-6}$, keeping derivative noise near $10^{-4}$ relative. |
+| **Identifiability** | A small residual does not mean the parameters are pinned down. `FitResult.correlation` and `cost_surface` are what to check before believing an estimate — and here they show that $\beta$ is only weakly determined by this data. |
+
+### Does it work?
+
+On **noise-free** data, recovery is exact to the limits of the arithmetic — relative errors of
+$2.5\times10^{-8}$ for $\beta$ and $3.2\times10^{-10}$ for $\alpha$, from a starting point of
+$\beta = 0.5$, $\alpha = 0.25$. Any error there would be the estimator's own, so this is the
+first thing the test suite pins down.
+
+On **noisy** data the estimate is a random variable, so a single run says little. Over 40
+independent noise realisations, fitting $\beta$ and $\alpha$ from $A$ and $T$:
+
+| Noise | $\beta$ bias | $\beta$ sd | $\alpha$ bias | $\alpha$ sd | 95% CI coverage |
+| --- | --- | --- | --- | --- | --- |
+| 2% | −0.5% | 6.9% | +0.5% | 4.3% | 98% |
+| 5% | −3.7% | 21.8% | +1.3% | 10.9% | 95% |
+| 10% | −11.2% | 41.3% | +3.3% | 21.9% | 88% |
+
+Three things are worth reading off this table, and two of them are limitations:
+
+1. **$\alpha$ is well determined; $\beta$ is not.** At 5% noise, $\alpha$ is recovered with a
+   standard deviation of 11% while $\beta$ scatters by 22% — and the single default run
+   overshoots $\beta$ by 10.5%. This is not an optimiser failure. $T$ responds to $\alpha$
+   directly, whereas $\beta$ reaches the observed compartments only through the unobserved
+   $I_1 \to I_2$ chain, so the data constrain it far more loosely. The mapped objective in
+   `08_cost_surface.png` shows the same thing geometrically: a broad flat floor along $\beta$.
+2. **The confidence intervals are calibrated where the linearisation holds.** At 5% noise
+   they cover the truth 95% of the time, exactly nominal. At 10% they cover only 88% — the
+   asymptotic Wald intervals become optimistic once the model's nonlinearity matters over the
+   width of the interval. Reported intervals should be read with that in mind.
+3. **The remaining parameters are assumptions, not results.** Only $\beta$ and $\alpha$ are
+   fitted; the other twelve are held at published values. Being wrong about those biases the
+   estimates, which is why the fitted set is kept small — `test_holding_the_wrong_baseline_biases_the_fit`
+   pins that behaviour down rather than papering over it.
+
+Eight multi-start runs from random points across the box all converge to the same estimate to
+within $2\times10^{-6}$, so the optimum found is the global one for this objective.
+
+---
+
+## What can actually be observed
+
+Everything above fits the compartments $A$ and $T$ directly. That is an
+idealisation, and it is the thing standing between this package and real data: **no
+surveillance system publishes "people currently in the symptomatic compartment."** UNAIDS, WHO
+and national programmes report aggregates over a *different* partition of the same population:
+
+| Published quantity | In model terms | Registry name |
+| --- | --- | --- |
+| People living with HIV | $I_1 + I_2 + A + T$ | `plhiv` |
+| People on antiretroviral therapy | $T$ | `on_art` |
+| Known HIV status | $I_2 + A + T$ | `diagnosed` |
+| ART coverage | $T / (I_1 + I_2 + A + T)$ | `art_coverage` |
+| HIV prevalence | $(I_1 + I_2 + A + T) / N$ | `prevalence` |
+
+The model's decomposition (undiagnosed / diagnosed / symptomatic / treated) is a *modelling*
+choice; the published decomposition is an artefact of what a health system can count. Fitting
+real data means mapping between them, and `hiv_drc.observables` is that map — each name is an
+**observation operator**, a function from model state to one observed series. Note that
+`art_coverage` is a ratio, so the operators are callables rather than a matrix; a linear
+formulation could not express it. The six compartments are registered as identity operators,
+so observing a compartment is the ordinary case rather than a special one, and every existing
+call keeps working.
+
+```python
+observations = generate_observations(observed=("plhiv", "on_art"), noise=0.05)
+fit = estimate_parameters(observations, fit=("beta", "alpha"))
+```
+
+### Which data is worth collecting?
+
+This turns an abstract question into a measurable one: does the decomposition that actually
+gets published contain enough information to pin down $\beta$ and $\alpha$?
+[`scripts/observability_study.py`](../scripts/observability_study.py) fits the same underlying
+epidemic through six observation sets, 20 noise realisations each at 5% noise. The **spread**
+of the estimate across realisations is the practical identifiability measure — the mean error
+is near zero everywhere, so it is the scatter that matters:
+
+| Observation set | $\beta$ spread | $\alpha$ spread | Coverage | Degenerate fits |
+| --- | --- | --- | --- | --- |
+| `A` + `T` (the idealisation) | 14.5% | 9.6% | 95% | 0 |
+| **`plhiv` + `on_art`** (what UNAIDS publishes) | **1.6%** | 11.8% | 95% | 0 |
+| `prevalence` + `art_coverage` | 2.2% | 13.3% | 100% | 0 |
+| `diagnosed` + `on_art` | 23.4% | 10.4% | 95% | 0 |
+| `plhiv` alone | 5.0% | **117.6%** | 84% | 1 |
+| `on_art` alone | **55.9%** | 14.1% | 89% | 2 |
+
+Three things fall out of this, and the first is good news:
+
+1. **The data that actually exists is better than the idealisation, by a lot.** Fitting
+   `plhiv` + `on_art` pins $\beta$ down about **nine times more tightly** than the package's own
+   `A` + `T` default (1.6% spread against 14.5%). $A$ is a small, fast-decaying compartment
+   carrying little information about transmission; PLHIV aggregates the whole infected pool,
+   including the undiagnosed $I_1$ where the transmission signal lives.
+2. **Each series pins down a different rate, and one alone pins down neither.** PLHIV on its
+   own leaves $\alpha$ essentially unidentified (118% spread, and one fit degenerates entirely);
+   ART counts alone leave $\beta$ unidentified (56%). The transmission signal and the
+   treatment-uptake signal live in different series, so a real study needs both.
+3. **Excluding the undiagnosed costs you most of the transmission signal.** `diagnosed` +
+   `on_art` differs from `plhiv` + `on_art` only by dropping $I_1$, and $\beta$'s spread goes
+   from 1.6% to 23.4% — a fifteen-fold loss from omitting the one compartment nobody counts
+   directly.
+
+For anyone pointing this at real data: collect PLHIV and ART numbers, and do not substitute
+"diagnosed" for "living with HIV".
+
+---
+
+## Meeting real data
+
+With observation operators in place, the model can be pointed at the actual UNAIDS estimates
+for the DRC. `scripts/fetch_worldbank.py` pulls them from the World Bank's unauthenticated
+republication of the UNAIDS country figures (AIDSinfo itself is a single-page app with no
+machine-readable route), and `hiv_drc.realdata` loads the committed snapshot:
+
+```python
+from hiv_drc import estimate_parameters, load_worldbank, initial_state_from_data
+
+observations, context = load_worldbank(first_year=2010)
+y0 = initial_state_from_data(
+    plhiv=float(observations.values["plhiv"][0]),
+    art_coverage=float(observations.values["art_coverage"][0]),
+    population=float(context["population"][0]),
+)
+fit = estimate_parameters(observations, fit=("beta", "alpha"), y0=y0)
+```
+
+Downloading lives in a script and its output is committed, so the loader stays pure, the
+tests run offline, and a fit is reproducible from a fixed snapshot rather than from whatever
+the API returned that day.
+
+### The published initial conditions do not match the published data
+
+Table 2 is labelled DRC 2020. Against the UNAIDS estimates for 2020:
+
+| Quantity | Table 2 | UNAIDS 2020 | Ratio |
+| --- | --- | --- | --- |
+| Total population | 89.00 M | 95.99 M | 1.08× |
+| People living with HIV | 0.484 M | 0.510 M | 1.05× |
+| **On treatment** | **0.077 M** | **0.270 M** | **3.51×** |
+| **ART coverage** | **15.9%** | **53%** | **3.33×** |
+
+Population and PLHIV agree within a few percent. The treatment compartment does not: Table 2's
+ART coverage of 15.9% is DRC in **2013** (14%), not 2020. Since $T$ is the series that
+identifies $\alpha$, starting a real-data fit from Table 2 pushes that error straight into the
+estimate of the parameter the fit exists to recover — which is why
+`initial_state_from_data` builds $y_0$ from the observed numbers instead. The three degrees of
+freedom the data cannot constrain (how untreated infections split between $I_1$, $I_2$ and $A$)
+are explicit arguments there rather than hidden defaults.
+
+### The model cannot be calibrated across the treatment scale-up
+
+This is the negative result, and it is the most useful thing this package has to say about
+applying the model to real data. Fitting the same series over different windows
+([`scripts/realdata_fit.py`](../scripts/realdata_fit.py)):
+
+| Window | $n$ | $\beta$ | $\alpha$ | $R_0$ | ART coverage RMSE |
+| --- | --- | --- | --- | --- | --- |
+| 2005–2024 | 20 | 0.060 | **0.000** (on bound) | 0.49 | 0.251 |
+| 2010–2024 | 15 | 0.105 | 0.031 | 0.85 | 0.178 |
+| 2016–2024 | 9 | 0.376 | 0.332 | 3.04 | 0.109 |
+| 2020–2024 | 5 | 0.770 | **1.000** (on bound) | 6.23 | 0.056 |
+
+$\alpha$ spans its **entire admissible range**, resting on a bound at both extremes; $\beta$
+moves by a factor of thirteen; and $R_0$ ranges from 0.49 to 6.23 — from "the epidemic dies
+out" to "explosive growth", straddling the very threshold the paper is about. Same data, same
+model, different window.
+
+That is the signature of **model misspecification**, not of a bad optimiser. Real DRC ART
+coverage went from 1% in 2005 to 71% in 2024, driven by international funding and the 2016 WHO
+treat-all guideline. The model's $\alpha$ is a **constant**. No constant treatment-uptake rate
+can produce that S-curve, so each fit picks whatever $\alpha$ matches the local slope of the
+window it was given, and the residual never gets good in absolute terms — even the best window
+misses ART coverage by 5.6 percentage points.
+
+Two honest conclusions for anyone wanting to use this model on real data:
+
+1. **Any $\alpha$ from a multi-decade fit is an artefact of the window.** Report the window, or
+   do not report $\alpha$.
+2. **Fixing this needs time-varying rates**, not a better optimiser, a longer chain, or tighter
+   bounds. The estimation and MCMC machinery carries over unchanged; the model does not. That
+   is the next section.
+
+---
+
+## Time-varying rates
+
+`Parameters` can give $\alpha$ and $\lambda$ a logistic scale-up — the shape a public-health
+programme actually expands in, slow while it is being stood up, fastest in the middle,
+flattening as it approaches the population it can reach:
+
+```python
+ramp = DRC_2020.replace(alpha=0.01, alpha_ceiling=0.5, alpha_midpoint=10.0, alpha_rate=0.4)
+ramp.alpha_at(10.0)          # 0.255, half way at the midpoint
+```
+
+`alpha_ceiling=None` is the default and means constant $\alpha$, so the published model and
+every result above is untouched — `test_the_system_stays_autonomous_without_a_scaleup` pins
+that down. The scale-up parameters are ordinary fields, so fitting them needs nothing new:
+`fit=("beta", "alpha", "alpha_ceiling", "alpha_midpoint", "alpha_rate")` flows through
+`estimate_parameters`, `run_mcmc` and the bounds machinery unchanged.
+
+**A time-varying rate makes the system non-autonomous, and that invalidates the theory.**
+$R_0$, the equilibria and the stability theorem are statements about constant coefficients;
+while $\alpha$ is still moving there is no fixed point to be stable about. So
+`reproduction_number()` and the derived exit rates `a1`/`a2` **raise** on a time-varying
+parameter set rather than returning a number that would look fine and mean nothing.
+`reproduction_number_at(p, t)` gives the instantaneous value, clearly labelled as a diagnostic
+rather than a threshold.
+
+### Making $\alpha$ time-varying does not fix the fit
+
+Three variants on the same 2005–2024 series
+([`scripts/scaleup_fit.py`](../scripts/scaleup_fit.py)):
+
+| Model | Parameters | Cost | ART coverage RMSE |
+| --- | --- | --- | --- |
+| constant (published) | 2 | 9.73 | 0.251 |
+| $\alpha(t)$ | 5 | 6.30 | 0.202 |
+| $\alpha(t)$ + $\lambda(t)$ | 9 | **1.75** | **0.102** |
+
+Three extra parameters for $\alpha(t)$ buy a 35% cost reduction. That is poor value, and the
+reason is structural: **$\alpha$ is not the bottleneck.**
+
+| $\alpha$ | Coverage reached by 2024 | | $\lambda$ | Coverage reached |
+| --- | --- | --- | --- | --- |
+| 0.035 | 34.1% | | 0.0015 (published) | 51.4% |
+| 0.5 | 51.4% | | 0.05 | 69.4% |
+| 5 | 55.1% | | 0.2 | 87.7% |
+| 50 | 55.6% | | 1.0 | 89.9% |
+| **500** | **55.6%** | | | |
+
+Pushing $\alpha$ to 500 — five hundred treatment initiations per person-year — still caps ART
+coverage at **55.6%**, against the 71% the DRC actually reached. $\alpha$ drains $I_2$; only
+$\lambda$ fills it, and the published $\lambda = 0.0015$/yr is a **mean time to diagnosis of
+667 years**. You cannot treat people you have not diagnosed. Freeing $\lambda$ lifts the
+ceiling immediately.
+
+### But the nine-parameter model is not identified
+
+The last row of the first table fits well. It does not mean anything. Ten random starts:
+
+| Cost | $\beta$ | `alpha_ceiling` | `lam_ceiling` |
+| --- | --- | --- | --- |
+| 2.0615 | 1.2026 | 0.3487 | 1.1070 |
+| 2.0615 | 1.2025 | 0.3470 | 1.2101 |
+| 2.0617 | 1.2028 | 0.3396 | **0.0105** |
+| 3.8492 | 0.5833 | 0.4520 | 2.0000 |
+| 3.8492 | 0.5833 | **1.9964** | 2.0000 |
+
+Rows agreeing on cost to three decimals have `lam_ceiling` differing by a factor of **115**;
+two rows with identical cost differ four-fold in `alpha_ceiling`. Every standard error in that
+fit is `inf`, for exactly this reason. $\beta$ ranges 0.58–1.20 across starts, all far above
+the published 0.15.
+
+So the complete answer, which is not the one this section set out to find:
+
+1. The published constant-rate model **cannot** fit the data — $\lambda$ caps coverage at ~56%.
+2. Time-varying $\alpha$ alone **does not help much** — $\alpha$ was never the binding constraint.
+3. Time-varying $\alpha$ and $\lambda$ **fits well but is not identified** — nine parameters
+   against twenty annual points of two series is not an identified problem, however good the
+   residual looks.
+
+Getting identified parameters out of this needs *more information*, not more flexibility:
+more observed series (the [observability study](#which-data-is-worth-collecting) says which
+ones carry which signal), or informative priors on the rates — which is the next section.
+
+---
+
+## Informative priors, and whether they earned it
+
+Informative priors are the standard remedy for a model the data cannot separate. They are
+also the standard way to fool yourself: **a tight enough prior always produces a tight
+posterior**, whether or not the data agreed with it, and the result is indistinguishable from
+a well-identified fit if you only look at the credible intervals.
+
+The number that tells them apart is the prior-to-posterior contraction,
+
+$$\text{contraction} = 1 - \frac{\mathrm{sd}(\text{posterior})}{\mathrm{sd}(\text{prior})}$$
+
+Near 1 the data determined the parameter; near 0 the posterior is the prior repeated back;
+negative means the data pulled against the prior hard enough to widen the answer.
+`hiv_drc.priors` provides `Normal`, `LogNormal` and `Uniform`, and `contraction()` measures
+this against the *truncated* prior — bounds narrow the prior too, and crediting the data for
+the clipping would be exactly the error this diagnostic exists to catch.
+
+Every shipped prior in `SCALEUP_PRIORS` carries a `why` string justifying it from outside the
+DRC series being fitted, and none was adjusted after seeing a fit:
+
+| Parameter | Prior | Justification |
+| --- | --- | --- |
+| $\beta$ | LogNormal(0.15, 0.7) | the published value, to within a factor of two |
+| `lam_ceiling` | LogNormal(0.35, 0.7) | a mature testing programme diagnoses in ~3 years, not 667 |
+| `alpha_ceiling` | LogNormal(4.0, 0.8) | under treat-all, initiation follows diagnosis in months |
+| `*_midpoint` | Normal(11, 3) | WHO's 2016 treat-all guidance, 11 years into a 2005 window |
+| `*_rate` | LogNormal(0.9, 0.6) | a national roll-out spans roughly five years |
+
+### The result: partial identification
+
+32 walkers × 20,000 steps ([`scripts/prior_contraction.py`](../scripts/prior_contraction.py)):
+
+| Parameter | Posterior median | Contraction | Verdict |
+| --- | --- | --- | --- |
+| $\beta$ | 0.581 | 0.76 | data determined it — **but see the caveat** |
+| `lam_ceiling` | 0.218 | 0.73 | data determined it |
+| `alpha_ceiling` | 2.04 | 0.30 | data helped |
+| `alpha_midpoint` | 14.9 | 0.24 | data helped |
+| `alpha_rate` | 1.11 | −0.03 | prior echo |
+| `lam_midpoint` | 12.0 | −0.28 | prior echo |
+| `lam_rate` | 0.95 | −0.06 | prior echo |
+
+So the priors bought **partial** identification, and the split is interpretable: the
+**levels** of the scale-ups (where they end up) are partly recoverable, while their
+**shapes** — how fast they ramp, and when the testing ramp happened — are not. Twenty annual
+points of two series constrain where the programme got to, not the path it took.
+
+### Two caveats that matter more than the table
+
+**$\beta$ is clipped by its own box.** Its 95% interval runs to 0.599 against an upper bound of
+0.6. The data are pushing $\beta$ against the wall — well above the published 0.15 and above
+the prior's median — so its contraction of 0.76 partly measures the box, not the evidence.
+A wider box would widen the posterior; the number is not the clean win it looks like.
+
+**The chains are still not converged.** Worst split-$\hat R$ is 1.69 (`lam`), against the
+conventional 1.1, and the autocorrelation time is 390–880 steps, so emcee's 50-$\tau$ rule
+wants around 44,000 kept steps against the 14,000 here. ESS reports `None` throughout, as it
+should.
+
+That second caveat is not decoration. An earlier version of this study ran 3,000 steps and
+reported `lam_ceiling` contraction of **0.21** — "data barely helped". The longer run puts it
+at **0.73** — "data determined it". The estimate of $\beta$ moved from 0.408 to 0.581, and
+`lam` from $6\times10^{-6}$ to 0.31. **The short run was not merely imprecise, it was
+wrong**, and it would have supported the opposite conclusion. Anyone reading a contraction
+table should check $\hat R$ first.
+
+(Finding that took an embarrassing detour: the first "longer" run silently reproduced the
+short one, because a patch adding a command-line budget override never actually matched the
+file it was meant to edit. Identical results across two supposedly different runs is a
+symptom worth taking seriously rather than explaining away.)
+
+---
+
+## Bayesian uncertainty
+
+Least squares answers "what is the single best fit, and how uncertain is it" by reading
+curvature off the Jacobian at the optimum — the Wald interval. That is only as good as its
+assumption that the log-likelihood is locally quadratic, and the coverage table above shows
+that assumption under strain at 10% noise, where the nominal 95% interval covers the truth
+only 88% of the time. `hiv_drc.bayesian` answers the same question a different way — by
+sampling the actual posterior with an affine-invariant ensemble MCMC sampler
+([`emcee`](https://emcee.readthedocs.io/)) — so a skewed or curved credible region comes out
+skewed or curved, at the cost of tens of thousands of forward integrations instead of a
+handful.
+
+Measured head-to-head, the gain turns out **not** to be better coverage but **much tighter
+intervals at the same coverage**, plus immunity to a failure mode the Wald interval has and
+the posterior does not. The numbers are [below](#does-it-calibrate-better).
+
+### The noise level is inferred, not assumed
+
+Least-squares fitting sidesteps the question of how noisy the data actually are with an ad hoc
+residual weighting (`estimation.weight_vector`), chosen to make two series of different
+magnitude comparable — not because it is anyone's best guess at the true measurement error. The
+Bayesian model asks the honest question instead: each observed series gets its own relative
+noise level `eta`, given a log-uniform (Jeffreys) prior and inferred jointly with the
+epidemiological rates. `test_log_likelihood_peaks_near_the_true_noise_level` checks that this
+actually works — scanning the likelihood over a grid of noise levels at the true rates picks
+out something close to the 5% level the synthetic data were generated with, without ever being
+told what it was.
+
+### Getting an expensive forward model to sample fast enough
+
+Three engineering decisions matter here, each learned by measuring rather than guessing:
+
+1. **Tighter priors than the least-squares safety box.** `estimation.PARAMETER_BOUNDS` is wide
+   enough that a local gradient search never has reason to test its edges — $\beta$ up to 2,
+   $\alpha$ up to 1. An ensemble sampler explores its *entire* prior support, including during
+   burn-in, so reusing that box verbatim would waste most of the walk on contact and
+   treatment-uptake rates with no epidemiological plausibility. `bayesian.MCMC_BOUNDS`
+   overrides just those two with a still-generous but defensible range.
+2. **Centring the ensemble on the least-squares estimate.** `run_mcmc` calls
+   `estimate_parameters` first — a few hundredths of a second — and starts every walker in a
+   tight jitter around that point rather than scattered across the prior. The sampler's budget
+   then goes to characterising the posterior, not to finding it.
+3. **A looser integrator tolerance than the frequentist fit uses**, since a single MCMC run
+   needs on the order of $10^4$ evaluations rather than a few dozen, and each one only has to
+   be smooth and stable, not accurate to the frequentist fit's ten digits.
+
+At the CLI's defaults (16 walkers, 1,000 steps) that is roughly 16,000 integrations, which is
+why `run_mcmc` takes tens of seconds to a few minutes rather than the fraction of a second
+`estimate_parameters` needs — a real cost, disclosed rather than hidden behind a spinner.
+
+### Reading the diagnostics honestly
+
+A converged-looking posterior mean is worth nothing if the chain has not actually mixed, so
+`BayesianFitResult` reports the numbers that would say so rather than only the numbers that
+look good:
+
+- **Split-$\hat R$** (`split_rhat`), the standard Gelman–Rubin diagnostic applied to each
+  walker split in half. Validated against two synthetic cases with a known answer — chains
+  drawn from the same distribution give $\hat R \approx 1.00$, chains stuck at unrelated offsets
+  give $\hat R \gg 1$ — before ever being trusted on a real chain (`test_split_rhat_*`).
+- **Effective sample size**, from emcee's own autocorrelation-time estimate. At the CLI's
+  default budget this consistently reports itself as `None` rather than a falsely precise
+  number: emcee's own rule of thumb wants the chain to run 50 times longer than the
+  autocorrelation time it is measuring, which a two-fitted-parameter problem does not reach
+  until well past what a demo run budgets for. Reporting `None` instead of guessing is the
+  point.
+- **Acceptance fraction**, which should sit roughly in emcee's own 0.2–0.5 comfort band; the
+  defaults here land around 0.55–0.60.
+
+### Does it calibrate better?
+
+Twenty independent noise realisations at 10% noise, each fitted both ways
+([`scripts/coverage_study.py`](../scripts/coverage_study.py), about 20 minutes). Widths are
+medians, because one frequentist run returns an infinite interval and would make a mean
+meaningless:
+
+| Parameter | Wald coverage | MCMC coverage | Wald width | MCMC width |
+| --- | --- | --- | --- | --- |
+| $\beta$ | 100% | 90% | 0.614 | 0.165 |
+| $\alpha$ | 90% | 90% | 0.0361 | 0.0161 |
+
+**The result is not the one this module was built expecting.** The hypothesis was that the
+Wald interval would under-cover and MCMC would fix it. What actually happens is more
+interesting:
+
+1. **The Wald interval for $\beta$ hits 100% coverage by being nearly vacuous.** Its median
+   width is 0.614 — four times the true value of $\beta = 0.15$, spanning essentially the whole
+   plausible range of a contact rate. Over-covering a nominal 95% interval is not a success;
+   it means the interval is too wide to constrain anything. The MCMC interval is **3.7× tighter**
+   and still covers 90% of the time, far closer to its nominal rate.
+2. **For $\alpha$ the coverage is identical at 90%, but the MCMC interval is 2.2× tighter.**
+   Same calibration, less than half the width — the honest gain.
+3. **One frequentist run in twenty degenerates completely.** On seed 2009 the optimiser drove
+   $\beta$ onto its lower bound of zero, where the infection term vanishes identically and the
+   model has no sensitivity to $\beta$ at all. The Jacobian loses rank, $\beta$'s standard error
+   becomes `inf`, and — because `inf` propagates through the off-diagonal arithmetic — $\alpha$'s
+   standard error comes back `nan` even though $\alpha$ itself was estimated fine (0.0401). MCMC
+   on that same data returned a perfectly usable finite interval for both. Excluding that run,
+   the frequentist numbers become 100% / 95% coverage and the picture above is unchanged.
+
+**A caveat on these numbers.** Each replicate ran a deliberately short chain (16 walkers ×
+500 steps) to keep the study to 20 minutes, and the worst split-$\hat R$ across all 20 runs and
+both parameters was **1.449** — above the conventional 1.1 threshold. Some of those chains had
+not fully converged, so the MCMC widths above should be read as indicative rather than
+definitive; a longer run would likely widen them somewhat. The qualitative conclusion (much
+tighter intervals at comparable coverage, and no degenerate output) is robust to that, but the
+exact ratios are not.
+
+---
+
+## Testing and verification
+
+```bash
+pytest
+```
+
+238 tests. The frequentist ones finish in a few seconds; the Bayesian ones run real (small)
+MCMC chains and add roughly one to three minutes depending on the machine — there is no way to
+test a sampler's convergence diagnostics without actually sampling. Sixteen of the 238 drive
+the [dashboard](USAGE.md#interactive-dashboard) through Streamlit's own `AppTest` harness; they add
+about a minute, because a fit through the UI is a real fit. Streamlit is in both the `dev`
+and the `app` extra, so CI runs them; on an install that has neither, the module skips with a
+message rather than failing. The design principle
+throughout is that **no test compares the code to itself** — each one checks against an
+independent derivation or a property that must hold mathematically:
+
+| What is checked | Against what |
+| --- | --- |
+| Closed-form $R_0$ | Spectral radius of $FV^{-1}$, over 300 random parameter sets |
+| $D$ in the denominator | $\det V$, computed numerically |
+| Complex-step Jacobian | Central finite differences |
+| Equilibria | The residual $\max\lvert f(y^*)\rvert$ of the vector field |
+| Threshold theorem | Sign of the dominant eigenvalue against sign of $R_0 - 1$, swept across the threshold |
+| Time-varying rates | That the constant path is bit-identical, that the ramp is monotonic from floor to ceiling, and that $R_0$ refuses rather than misleads |
+| The structural ceiling | That a hundredfold rise in $\alpha$ moves ART coverage by under 2 points while $\lambda$ is held at its published value |
+| Prior densities | Numerical integration to one, and a log-normal's median and log-spread against its own samples |
+| The contraction diagnostic | Two constructed posteriors with known answers: one that *is* the prior (0), one ten times sharper (0.9) |
+| That priors reach the sampler | A prior insisting $\beta \approx 0.40$, against data generated at 0.15, must drag the posterior with it — the one failure mode that would invalidate every contraction number |
+| Trajectories | The population balance $dN/dt = \Lambda - \mu N - \delta_1 A - \delta_2 T$, and the invariant region $N \le \Lambda/\mu$ |
+| Sensitivity indices | The exact values $+1$ for $\beta$ and $-\phi/(\mu+\phi)$ for $\phi$ |
+| PRCC implementation | A synthetic problem with a known monotone answer |
+| Integration | Agreement between LSODA, RK45 and Radau |
+| Synthetic generator | Noise-free output against the integrator; empirical noise scale against the requested $\sigma$; CSV round trip |
+| Parameter recovery | The known generating values, to $10^{-4}$ relative on noise-free data |
+| The optimum itself | Cost at the estimate against cost at the truth — an early stop is invisible if only the parameter error is checked |
+| Confidence intervals | Whether they contain the generating value across noise realisations |
+| Cost surface | Grid minimum against the optimiser's estimate |
+| `log_posterior` | The arithmetic identity `log_prior + log_likelihood`, independent of any sampler run |
+| The noise-level prior | Whether the likelihood itself peaks near the true generating noise level, on a grid it was never told |
+| Split-$\hat R$ | Two synthetic chains with a known answer: well-mixed gives $\approx 1$, stuck walkers give $\gg 1$ |
+| MCMC recovery | Reproducibility under a fixed seed; agreement with the independent least-squares estimate; coverage of the truth |
+| The dashboard | The failures that only appear when it is run: a widget bound that rejects the package's own default seed, a label that renders as an empty box because the font lacks the glyph, a stale fit left on screen after the scenario changed |
+
+Docstring examples are executed as part of the run (`--doctest-modules`).
+
+A note on the Jacobian: it is computed by **complex-step differentiation**, perturbing each
+coordinate into the imaginary direction and reading off
+$\mathrm{Im}\, f(y + ih\mathbf{e}_j)/h$. Because there is no subtraction, there is no
+cancellation error, so $h$ can be taken as small as $10^{-200}$ and the result is accurate to
+machine precision. This works only because the right-hand side is analytic — it uses nothing
+but arithmetic, with no branching or absolute values. That constraint is documented in
+`model.py` and should be preserved by anyone extending the model.

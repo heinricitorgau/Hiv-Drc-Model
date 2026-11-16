@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite it as below, and cite the original
+  paper it reproduces (listed under references).
+type: software
+title: "Hiv-Drc-Model: a tested reproduction of the DRC HIV/AIDS treatment model, with parameter estimation from noisy data"
+authors:
+  - alias: heinricitorgau
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/heinricitorgau/hiv-drc-model"
+abstract: >-
+  A reproduction of the six-compartment HIV/AIDS transmission model with
+  treatment of Mbayi, Mpompi and Munyakazi (Tamkang Journal of Mathematics,
+  2026), extended with the inverse problem: recovering transmission and
+  treatment rates from noisy surveillance data by bounded nonlinear least
+  squares and ensemble MCMC, observation operators for UNAIDS indicators,
+  time-varying rates, and an evaluation against real DRC data.
+keywords:
+  - epidemiology
+  - compartmental model
+  - HIV
+  - basic reproduction number
+  - inverse problem
+  - parameter estimation
+  - bayesian inference
+  - MCMC
+  - uncertainty quantification
+references:
+  - type: article
+    title: "A model of HIV/AIDS transmission dynamics with treatment: The case of the DRC"
+    authors:
+      - family-names: Mbayi
+        given-names: Charles K.
+      - family-names: Mpompi
+        given-names: Jean-Marie N.
+      - family-names: Munyakazi
+        given-names: Justin B.
+    journal: Tamkang Journal of Mathematics
+    volume: 57
+    issue: 2
+    start: 149
+    end: 169
+    year: 2026
+    doi: 10.5556/j.tkjm.57.5817.2026
