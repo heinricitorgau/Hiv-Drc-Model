@@ -175,7 +175,26 @@ class Observations:
             rows = list(csv.DictReader(handle))
         if not rows:
             raise ValueError(f"{path} contains no data rows")
-        columns = {key: np.array([float(row[key]) for row in rows]) for key in rows[0]}
+        if "t" not in rows[0]:
+            raise ValueError(
+                f"{path} has no 't' column; found {sorted(rows[0])}"
+            )
+
+        def number(row: dict, key: str, line: int) -> float:
+            # Line numbers count the header as line 1, matching an editor.
+            cell = row.get(key)
+            try:
+                return float(cell)
+            except (TypeError, ValueError):
+                raise ValueError(
+                    f"{path}, line {line}: column {key!r} holds {cell!r}, "
+                    "not a number (missing values are not supported)"
+                ) from None
+
+        columns = {
+            key: np.array([number(row, key, i) for i, row in enumerate(rows, 2)])
+            for key in rows[0]
+        }
         t = columns.pop("t")
         observed = {k: v for k, v in columns.items() if not k.endswith("_true")}
         truth = {k[:-5]: v for k, v in columns.items() if k.endswith("_true")}

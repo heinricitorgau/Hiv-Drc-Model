@@ -703,9 +703,9 @@ exact ratios are not.
 pytest
 ```
 
-238 tests. The frequentist ones finish in a few seconds; the Bayesian ones run real (small)
+242 tests. The frequentist ones finish in a few seconds; the Bayesian ones run real (small)
 MCMC chains and add roughly one to three minutes depending on the machine — there is no way to
-test a sampler's convergence diagnostics without actually sampling. Sixteen of the 238 drive
+test a sampler's convergence diagnostics without actually sampling. Sixteen of the 242 drive
 the [dashboard](USAGE.md#interactive-dashboard) through Streamlit's own `AppTest` harness; they add
 about a minute, because a fit through the UI is a real fit. Streamlit is in both the `dev`
 and the `app` extra, so CI runs them; on an install that has neither, the module skips with a

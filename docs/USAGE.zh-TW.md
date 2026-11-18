@@ -257,7 +257,7 @@ hiv-drc-model/
 │   ├── bayesian.py          同一個反問題，用 MCMC（emcee）求解
 │   ├── plotting.py          圖表（這裡不做任何計算）
 │   └── cli.py               命令列介面
-├── tests/                   222 個測試（含 doctest 共 238 個）
+├── tests/                   226 個測試（含 doctest 共 242 個）
 │   ├── conftest.py          共用 fixture
 │   ├── test_model.py        ODE 右側函數與 Jacobian
 │   ├── test_simulation.py   積分、守恆、求解器一致性

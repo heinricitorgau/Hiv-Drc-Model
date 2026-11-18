@@ -151,6 +151,27 @@ def test_empty_csv_is_rejected(tmp_path):
         Observations.from_csv(path)
 
 
+def test_csv_without_time_column_is_rejected(tmp_path):
+    """A file with no ``t`` column must name the problem, not raise KeyError."""
+    path = tmp_path / "no_t.csv"
+    path.write_text("year,A\n2000,0.1\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="no 't' column"):
+        Observations.from_csv(path)
+
+
+@pytest.mark.parametrize("body", ["t,A\n0,0.1\n1,\n", "t,A\n0,0.1\n1\n", "t,A\n0,0.1\n1,n/a\n"])
+def test_csv_bad_cell_names_line_and_column(tmp_path, body):
+    """An empty, missing or non-numeric cell is reported with its location.
+
+    Real surveillance exports have gaps; ``float('')`` alone says neither
+    which file line nor which series, and a short row raised ``TypeError``.
+    """
+    path = tmp_path / "gap.csv"
+    path.write_text(body, encoding="utf-8")
+    with pytest.raises(ValueError, match=r"line 3: column 'A'"):
+        Observations.from_csv(path)
+
+
 def test_generating_from_other_parameters():
     """The generator must follow its parameters, not the module default."""
     other = DRC_2020.replace(beta=0.30)

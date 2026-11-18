@@ -19,7 +19,7 @@ twin, and the two languages are expected to stay in step.
 
 ```bash
 pip install -e ".[dev]"          # numpy, scipy, matplotlib, emcee + pytest, ruff, streamlit
-pytest                           # 238 tests, ~3-5 min
+pytest                           # 242 tests, ~3-5 min
 pytest tests/test_estimation.py -q                       # one file
 pytest tests/test_app.py -q -k "glyph"                   # one test
 ruff check src tests             # exactly what CI lints; app.py is outside both
